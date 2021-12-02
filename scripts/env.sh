@@ -1,30 +1,23 @@
 #!/bin/bash
 set -x
-export DISPLAY=:0
-export MIPS_ROOT=/media-usb/mips
-export MIPS_APP=${MIPS_ROOT}/MIPS
-#export FFMPEG_PATH=${MIPS_ROOT}/ffmpeg
-export FFMPEG_PATH=/media-usb/libraries.media.middleware.cartwheel.ffmpeg/ffmpeg
-#export FFMPEG_PATH=${MIPS_ROOT}/mips_install/bin
+SCRIPT_DIR="$( cd "$(dirname "${BASH_SOURCE[0]:-$0}")" >/dev/null 2>&1 ; pwd -P )"
 
-export STREAM_PATH=${MIPS_APP}/content/
+export DISPLAY=:0
+export WORK_DIR=${SCRIPT_DIR}/../..
+
 export STREAM_FILE=Puppies_1920x1080_38mbps_30fps_Main_at_L4.1.mkv
 
 export OUTPUT_PATH=/tmp/
 export OUTPUT_FILE=out.yuv
-#export OUTPUT_PATH=/dev/
-#export OUTPUT_FILE=null
 
-export RTSPSERVER_PATH=${MIPS_APP}/tools/rtsp-server/
+export MEDIA_PATH=${WORK_DIR}
 
-export MIPS_INSTALL=${MIPS_ROOT}/mips_install
-export PKG_CONFIG_PATH=${MIPS_INSTALL}/lib/pkgconfig
-export LD_LIBRARY_PATH=${MIPS_INSTALL}/lib
-
-export MEDIA_PATH=/media-nvme
+export FFMPEG_PATH=${WORK_DIR}/libraries.media.middleware.cartwheel.ffmpeg/ffmpeg
+export LOCAL_INSTALL=${WORK_DIR}/local_install
+export LD_LIBRARY_PATH=${LOCAL_INSTALL}/lib:${LD_LIBRARY_PAT}
 
 #MEDIA=/media-usb/Puppies_3840x2160_20mbps_60fps_High_at_L5.2.h264
-MEDIA=/media-nvme/Puppies_1920x1080_38mbps_30fps_Main_at_L4.1.265
+MEDIA=${MEDIA_PATH}/Puppies_1920x1080_38mbps_30fps_Main_at_L4.1.265
 #MEDIA=/media-nvme/Puppies_3840x2160_20mbps_60fps_High_at_L5.2_short.mp4
 #MEDIA=/media-usb/MIPS/content/FPS_test_1080p60_L4.2_100frames.mkv
 
