@@ -8,4 +8,6 @@ list(
   splitter_test.cpp)
 
 add_executable(${TARGET} ${SOURCES})
+target_include_directories(
+    ${TARGET} PUBLIC ../3rd_party)
 target_link_libraries(${TARGET} PRIVATE splitter)
