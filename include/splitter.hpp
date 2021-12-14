@@ -1,8 +1,8 @@
 #ifndef _SPLITTER_HPP
 #define _SPLITTER_HPP
 
-#define WIDTH_CROP 800
-#define HEIGHT_CROP 800
+#define WIDTH_CROP 300
+#define HEIGHT_CROP 300
 
 #pragma pack(push, 1)
 

@@ -10,8 +10,7 @@ using namespace std;
 int main(int argc, char **argv)
 {
     int img_width, img_height, channels;
-    rgb *input = (rgb *)stbi_load("../tests/silverfalls1.png", &img_width, &img_height, &channels, 0);
-    rgb *output = (rgb *)malloc(WIDTH_CROP * HEIGHT_CROP * sizeof(rgb));
+    rgb *input = (rgb *)stbi_load("../tests/silverfalls.bmp", &img_width, &img_height, &channels, STBI_rgb);
     if (input == NULL)
     {
         cout << "Error in loading the image\n";
@@ -27,9 +26,14 @@ int main(int argc, char **argv)
     cout << "Loaded image with a width of " << img_width << ", a height of "
          << img_height << " and " << channels << " channels\n";
 
+    rgb *output = (rgb *)malloc(WIDTH_CROP * HEIGHT_CROP * sizeof(rgb));
+
     splitter(input, img_width, img_height, channels, output);
 
     stbi_write_bmp("silverfallscrop.bmp", WIDTH_CROP, HEIGHT_CROP, sizeof(rgb), output);
+
+    stbi_image_free(input);
+    free(output);
 
     return 0;
 }

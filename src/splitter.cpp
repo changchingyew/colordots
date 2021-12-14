@@ -28,18 +28,20 @@ static void kernel_time(const string &msg, event e)
 
 void splitter(rgb *input, int width, int height, int channels, rgb *output)
 {
-    size_t num_pixels = width * height;
-    size_t img_size = width * height * sizeof(rgb);
+    int crop_offset_x = 600;
+    int crop_offset_y = 600;
 
-    size_t crop_size = WIDTH_CROP * HEIGHT_CROP * sizeof(rgb);
+    range input_range(width*height);
+    range<2> output_range(WIDTH_CROP, HEIGHT_CROP);
 
-    int crop_x = 1;
-    int crop_y = 1;
+    buffer<rgb, 1> input_buf(input, input_range);
+    buffer<rgb, 2> output_buf(output, output_range);
 
-    buffer<rgb, 2> input_buf(input, range(width, height));
-    buffer<rgb, 2> output_buf(output, range(WIDTH_CROP, HEIGHT_CROP));
-
+#if 1
     gpu_selector sel;
+#else
+    cpu_selector sel;
+#endif
     event e;
 
     try
@@ -53,15 +55,12 @@ void splitter(rgb *input, int width, int height, int channels, rgb *output)
                          accessor input_acc(input_buf, h, read_only);
                          accessor output_acc(output_buf, h, write_only);
 
-                         int crop_x_offset = crop_x * WIDTH_CROP;
-                         int crop_y_offset = crop_y * HEIGHT_CROP;
-
-                         h.parallel_for(range<2>(WIDTH_CROP, HEIGHT_CROP), [=](id<2> idx)
+                         h.parallel_for(output_range, [=](id<2> idx)
                                         {
-                                            int j = idx[0];
-                                            int i = idx[1];
+                                            int row = idx[0];
+                                            int col = idx[1];
 
-                                            output_acc[j][i] = input_acc[crop_x_offset + j][crop_y_offset + i];
+                                            output_acc[row][col] = input_acc[(row + crop_offset_y) * width + (col + crop_offset_x)];
                                         });
                      });
         q.wait_and_throw();
