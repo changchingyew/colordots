@@ -4,7 +4,7 @@
 #include <vector>
 using namespace std;
 
-#define NUM_CROP_INFO 4
+#define NUM_CROP_INFO 80
 
 #define WIDTH_CROP 300
 #define HEIGHT_CROP 300
