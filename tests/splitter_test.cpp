@@ -10,14 +10,15 @@ using namespace std;
 int main(int argc, char **argv)
 {
     int img_width, img_height, channels;
-    rgb *input = (rgb *)stbi_load("../tests/silverfalls.bmp", &img_width, &img_height, &channels, STBI_rgb);
+
+    rgb_t *input = (rgb_t *)stbi_load("../tests/silverfalls.bmp", &img_width, &img_height, &channels, STBI_rgb);
     if (input == NULL)
     {
         cout << "Error in loading the image\n";
         exit(1);
     }
 
-    if (channels != sizeof(rgb))
+    if (channels != sizeof(rgb_t))
     {
         cout << "Error in number of channels:" << channels << "\n";
         exit(1);
@@ -26,14 +27,19 @@ int main(int argc, char **argv)
     cout << "Loaded image with a width of " << img_width << ", a height of "
          << img_height << " and " << channels << " channels\n";
 
-    rgb *output = (rgb *)malloc(WIDTH_CROP * HEIGHT_CROP * sizeof(rgb));
+    vector<rgb_t*> output;
 
     splitter(input, img_width, img_height, channels, output);
 
-    stbi_write_bmp("silverfallscrop.bmp", WIDTH_CROP, HEIGHT_CROP, sizeof(rgb), output);
+    string filename;
+    int i = 0;
+    for(auto it : output) {
+        filename = "silverfallscrop" + to_string(i) + ".bmp";
+        stbi_write_bmp(filename.c_str(), WIDTH_CROP, HEIGHT_CROP, sizeof(rgb_t), it);
+        i++;
+    }
 
     stbi_image_free(input);
-    free(output);
 
     return 0;
 }
