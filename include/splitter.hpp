@@ -4,12 +4,6 @@
 #include <vector>
 using namespace std;
 
-#define NUM_CROP_INFO 80
-
-#define WIDTH_CROP 300
-#define HEIGHT_CROP 300
-#define CROP_SIZE ( WIDTH_CROP * HEIGHT_CROP )
-
 #pragma pack(push, 1)
 
 typedef struct
@@ -27,6 +21,6 @@ typedef struct
 
 #pragma pack(pop)
 
-void splitter(rgb_t *input, int img_width, int img_height, int channels, vector<rgb_t*> &output);
+void splitter(rgb_t *input, size_t img_width, size_t img_height, int channels, size_t crop_width, size_t crop_height, vector<crop_info_t> crop_info, vector<rgb_t*> &output);
 
 #endif

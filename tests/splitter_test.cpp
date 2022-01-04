@@ -27,15 +27,27 @@ int main(int argc, char **argv)
     cout << "Loaded image with a width of " << img_width << ", a height of "
          << img_height << " and " << channels << " channels\n";
 
+    size_t crop_width = 300, crop_height = 300;
+    vector<crop_info_t> crop_info;
+    crop_info_t crop_info_entry;
     vector<rgb_t*> output;
+    int i, j;
 
-    splitter(input, img_width, img_height, channels, output);
+    for ( j = 0; j <= img_height - crop_height; j += crop_height)
+        for ( i = 0; i <= img_width - crop_width; i += crop_width)
+        {
+            crop_info_entry.left = i;
+            crop_info_entry.top = j;
+            crop_info.push_back(crop_info_entry);
+        }
+
+    splitter(input, img_width, img_height, channels, crop_width, crop_height, crop_info, output);
 
     string filename;
-    int i = 0;
+    i = 0;
     for(auto it : output) {
         filename = "silverfallscrop" + to_string(i) + ".bmp";
-        stbi_write_bmp(filename.c_str(), WIDTH_CROP, HEIGHT_CROP, sizeof(rgb_t), it);
+        stbi_write_bmp(filename.c_str(), crop_width, crop_height, sizeof(rgb_t), it);
         i++;
     }
 
