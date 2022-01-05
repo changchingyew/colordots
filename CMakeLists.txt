@@ -13,5 +13,5 @@ ELSE()
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 ENDIF()
 
-add_subdirectory(src)
+# add_subdirectory(src)
 add_subdirectory(tests)

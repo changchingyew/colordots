@@ -41,7 +41,7 @@ int main(int argc, char **argv)
             crop_info.push_back(crop_info_entry);
         }
 
-    splitter(input, img_width, img_height, channels, crop_width, crop_height, crop_info, output);
+    splitter<rgb_t>(input, img_width, img_height, channels, crop_width, crop_height, crop_info, output);
 
     string filename;
     i = 0;
