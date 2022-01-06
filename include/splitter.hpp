@@ -40,6 +40,11 @@ static void kernel_time(const string &msg, event e)
 template <typename T>
 void splitter(T *input, size_t width, size_t height, int channels, size_t crop_width, size_t crop_height, vector<crop_info_t> crop_info, vector<T*> &output)
 {
+#define MULTI_PIXEL_NUM 4
+typedef struct {
+    T pixel[MULTI_PIXEL_NUM];
+} multi_pixel_t;
+
     // Create a command queue using the device selector and request profiling
     auto prop_list = property_list{property::queue::enable_profiling()};
 #if 1
@@ -51,8 +56,13 @@ void splitter(T *input, size_t width, size_t height, int channels, size_t crop_w
     event e;
 
     int input_size = width * height * channels;
+#if 1
     T* kernel_input = malloc_host<T>(input_size, q);
     memcpy(kernel_input, input, input_size);
+#else
+    multi_pixel_t* kernel_input = malloc_host<multi_pixel_t>(input_size/MULTI_PIXEL_NUM, q);
+    memcpy(kernel_input, input, input_size);
+#endif
 
     const size_t num_crop = crop_info.size();
     crop_info_t* kernel_crop_info = malloc_shared<crop_info_t>(num_crop, q);
@@ -61,10 +71,17 @@ void splitter(T *input, size_t width, size_t height, int channels, size_t crop_w
     for(int i = 0; i < num_crop; i++)
         output.push_back(malloc_shared<T>(crop_width * crop_height, q));
 
+#if 1
     T **kernel_output = malloc_host<T*>(num_crop * sizeof(T*), q);
     memcpy(kernel_output, output.data(), num_crop * sizeof(T*));
 
     const range<3> splitter_range{num_crop, crop_height, crop_width};
+#else
+    multi_pixel_t **kernel_output = malloc_host<multi_pixel_t*>(num_crop * sizeof(multi_pixel_t*), q);
+    memcpy(kernel_output, output.data(), num_crop * sizeof(multi_pixel_t*));
+
+    const range<3> splitter_range{num_crop, crop_height, crop_width/MULTI_PIXEL_NUM};
+#endif
 
     try
     {
@@ -76,8 +93,13 @@ void splitter(T *input, size_t width, size_t height, int channels, size_t crop_w
                                         int row = idx[1];
                                         int col = idx[2];
 
+#if 1
                                         T *kernel_output_ptr = kernel_output[crop_id];
                                         kernel_output_ptr[row * crop_width + col] = kernel_input[(row + kernel_crop_info[crop_id].top ) * width + (col + kernel_crop_info[crop_id].left)];
+#else
+                                        multi_pixel_t *kernel_output_ptr = kernel_output[crop_id];
+                                        kernel_output_ptr[row * crop_width/MULTI_PIXEL_NUM + col] = kernel_input[(row + kernel_crop_info[crop_id].top ) * width/MULTI_PIXEL_NUM + (col + kernel_crop_info[crop_id].left)];
+#endif
                                     });
                     });
         q.wait_and_throw();
