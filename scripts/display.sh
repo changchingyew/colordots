@@ -9,10 +9,11 @@ for (( i = 9; i >= 0; i--));
 do 
     for (( j = 7; j >=0; j--)); 
     do 
-        ((k=$i + $j*10))
-        ((x=75*$i + 1000))
-        ((y=75*$j + 200))
-        display -resize 75x75 -geometry +$x+$y silverfallscrop$k.bmp &
+        ((crop_x=300*$i))
+        ((crop_y=300*$j))
+        ((x=$crop_x/4 + 100))
+        ((y=$crop_y/4 + 100))
+        display -resize 75x75 -geometry +$x+$y silverfallscrop${crop_x}x${crop_y}.bmp &
         sleep 1
     done
 done

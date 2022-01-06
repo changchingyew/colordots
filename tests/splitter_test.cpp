@@ -46,7 +46,7 @@ int main(int argc, char **argv)
     string filename;
     i = 0;
     for(auto it : output) {
-        filename = "silverfallscrop" + to_string(i) + ".bmp";
+        filename = "silverfallscrop" + to_string(crop_info.at(i).left) + "x" + to_string(crop_info.at(i).top) + ".bmp";
         stbi_write_bmp(filename.c_str(), crop_width, crop_height, sizeof(rgb_t), it);
         i++;
     }
