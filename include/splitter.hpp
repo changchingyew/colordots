@@ -78,12 +78,12 @@ typedef struct {
 #ifdef MULTI_PIXEL
     cout << "Size of multi_pixel: " << sizeof(multi_pixel_t) << "\n";
 
-    multi_pixel_t **kernel_output = malloc_host<multi_pixel_t*>(num_crop * sizeof(multi_pixel_t*), q);
+    multi_pixel_t **kernel_output = malloc_shared<multi_pixel_t*>(num_crop * sizeof(multi_pixel_t*), q);
     memcpy(kernel_output, output.data(), num_crop * sizeof(multi_pixel_t*));
 
     const range<3> splitter_range{num_crop, crop_height, crop_width/MULTI_PIXEL_NUM};
 #else
-    T **kernel_output = malloc_host<T*>(num_crop * sizeof(T*), q);
+    T **kernel_output = malloc_shared<T*>(num_crop * sizeof(T*), q);
     memcpy(kernel_output, output.data(), num_crop * sizeof(T*));
 
     const range<3> splitter_range{num_crop, crop_height, crop_width};
