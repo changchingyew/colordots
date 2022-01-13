@@ -23,6 +23,13 @@ typedef struct
     uint8_t blue;
 } rgb_t;
 
+typedef struct
+{
+    float r;
+    float g;
+    float b;
+} rgbe_t;
+
 #pragma pack(pop)
 
 static void kernel_time(const string &msg, event e)
@@ -42,7 +49,7 @@ void splitter(T *input, size_t width, size_t height, int channels, size_t crop_w
 {
 #pragma pack(push, 1)
 
-#define MULTI_PIXEL_NUM 8
+#define MULTI_PIXEL_NUM 4
 typedef struct {
     T pixel[MULTI_PIXEL_NUM];
 } multi_pixel_t;
@@ -50,7 +57,7 @@ typedef struct {
 #pragma pack(pop)
     // Create a command queue using the device selector and request profiling
     auto prop_list = property_list{property::queue::enable_profiling()};
-#if 1
+#if 0
     gpu_selector sel;
 #else
     cpu_selector sel;
@@ -58,8 +65,8 @@ typedef struct {
     queue q(sel, dpc_common::exception_handler, prop_list);
     event e;
 
-    int input_size = width * height * channels;
-    multi_pixel_t* kernel_input = malloc_host<multi_pixel_t>(input_size/MULTI_PIXEL_NUM, q);
+    int input_size = width * height * sizeof(T);
+    multi_pixel_t* kernel_input = malloc_host<multi_pixel_t>(input_size/sizeof(multi_pixel_t), q);
     memcpy(kernel_input, input, input_size);
 
     const size_t num_crop = crop_info.size();
