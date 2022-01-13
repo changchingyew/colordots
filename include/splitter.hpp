@@ -8,6 +8,12 @@
 using namespace std;
 using namespace sycl;
 
+typedef struct 
+{
+    uint32_t left;
+    uint32_t top;
+} crop_info_t;
+
 #pragma pack(push, 1)
 
 typedef struct
@@ -16,12 +22,6 @@ typedef struct
     uint8_t green;
     uint8_t red;
 } rgb_t;
-
-typedef struct 
-{
-    uint32_t left;
-    uint32_t top;
-} crop_info_t;
 
 #pragma pack(pop)
 
@@ -40,15 +40,14 @@ static void kernel_time(const string &msg, event e)
 template <typename T>
 void splitter(T *input, size_t width, size_t height, int channels, size_t crop_width, size_t crop_height, vector<crop_info_t> crop_info, vector<T*> &output)
 {
-#define MULTI_PIXEL
+#pragma pack(push, 1)
 
-#ifdef MULTI_PIXEL
 #define MULTI_PIXEL_NUM 8
 typedef struct {
     T pixel[MULTI_PIXEL_NUM];
 } multi_pixel_t;
-#endif
 
+#pragma pack(pop)
     // Create a command queue using the device selector and request profiling
     auto prop_list = property_list{property::queue::enable_profiling()};
 #if 1
@@ -60,13 +59,8 @@ typedef struct {
     event e;
 
     int input_size = width * height * channels;
-#ifdef MULTI_PIXEL
     multi_pixel_t* kernel_input = malloc_host<multi_pixel_t>(input_size/MULTI_PIXEL_NUM, q);
     memcpy(kernel_input, input, input_size);
-#else
-    T* kernel_input = malloc_host<T>(input_size, q);
-    memcpy(kernel_input, input, input_size);
-#endif
 
     const size_t num_crop = crop_info.size();
     crop_info_t* kernel_crop_info = malloc_shared<crop_info_t>(num_crop, q);
@@ -75,19 +69,12 @@ typedef struct {
     for(int i = 0; i < num_crop; i++)
         output.push_back(malloc_shared<T>(crop_width * crop_height, q));
 
-#ifdef MULTI_PIXEL
     cout << "Size of multi_pixel: " << sizeof(multi_pixel_t) << "\n";
 
     multi_pixel_t **kernel_output = malloc_shared<multi_pixel_t*>(num_crop * sizeof(multi_pixel_t*), q);
     memcpy(kernel_output, output.data(), num_crop * sizeof(multi_pixel_t*));
 
     const range<3> splitter_range{num_crop, crop_height, crop_width/MULTI_PIXEL_NUM};
-#else
-    T **kernel_output = malloc_shared<T*>(num_crop * sizeof(T*), q);
-    memcpy(kernel_output, output.data(), num_crop * sizeof(T*));
-
-    const range<3> splitter_range{num_crop, crop_height, crop_width};
-#endif
 
     try
     {
@@ -99,14 +86,9 @@ typedef struct {
                                         int row = idx[1];
                                         int col = idx[2];
 
-#ifdef MULTI_PIXEL
                                         multi_pixel_t *kernel_output_ptr = kernel_output[crop_id];
                                         kernel_output_ptr[row * crop_width/MULTI_PIXEL_NUM + col] = 
                                             kernel_input[(row + kernel_crop_info[crop_id].top ) * width/MULTI_PIXEL_NUM + (col + kernel_crop_info[crop_id].left/MULTI_PIXEL_NUM)];
-#else
-                                        T *kernel_output_ptr = kernel_output[crop_id];
-                                        kernel_output_ptr[row * crop_width + col] = kernel_input[(row + kernel_crop_info[crop_id].top ) * width + (col + kernel_crop_info[crop_id].left)];
-#endif
                                     });
                     });
         q.wait_and_throw();
