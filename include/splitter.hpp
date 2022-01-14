@@ -57,7 +57,7 @@ typedef struct {
 #pragma pack(pop)
     // Create a command queue using the device selector and request profiling
     auto prop_list = property_list{property::queue::enable_profiling()};
-#if 0
+#if 1
     gpu_selector sel;
 #else
     cpu_selector sel;
