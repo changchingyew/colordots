@@ -27,7 +27,7 @@ void write_output(string filename_prefix, int width, int height, int channels, v
     string filename;
     int i = 0;
     for(auto it : output) {
-        filename = filename_prefix + to_string(crop_info.at(i).left) + "x" + to_string(crop_info.at(i).top) + ".bmp";
+        filename = filename_prefix + "-x" + to_string(crop_info.at(i).left) + "y" + to_string(crop_info.at(i).top) + ".bmp";
         stbi_write_bmp(filename.c_str(), width, height, sizeof(rgb_t), it);
         i++;
     }
@@ -38,7 +38,7 @@ void write_output(string filename_prefix, int width, int height, int channels, v
     string filename;
     int i = 0;
     for(auto it : output) {
-        filename = filename_prefix + to_string(crop_info.at(i).left) + "x" + to_string(crop_info.at(i).top) + ".hdr";
+        filename = filename_prefix + "-x" + to_string(crop_info.at(i).left) + "y" +to_string(crop_info.at(i).top) + ".hdr";
         const float *outputf {(float *)it};
         stbi_write_hdr(filename.c_str(), width, height, channels, outputf);
         i++;
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 
     splitter<rgb_t>(input, img_width, img_height, channels, crop_width, crop_height, crop_info, output);
 
-    write_output("silverfallscrop", crop_width, crop_height, channels, crop_info, output);
+    write_output("silverfalls", crop_width, crop_height, channels, crop_info, output);
 
     stbi_image_free(input);
 
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
     vector<rgbe_t*> output2;
     splitter<rgbe_t>(input2, img_width, img_height, channels, crop_width, crop_height, crop_info, output2);
 
-    write_output("seymour_park_crop", crop_width, crop_height, channels, crop_info, output2);
+    write_output("seymour_park", crop_width, crop_height, channels, crop_info, output2);
 
     stbi_image_free(input2);
 

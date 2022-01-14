@@ -1,5 +1,5 @@
-#ifndef _SPLITTER_HPP
-#define _SPLITTER_HPP
+#ifndef _SPLIpixelTpixelTER_HPP
+#define _SPLIpixelTpixelTER_HPP
 
 #include <vector>
 #include <CL/sycl.hpp>
@@ -44,14 +44,14 @@ static void kernel_time(const string &msg, event e)
     cout << msg << elapsed << " useconds\n";
 }
 
-template <typename T>
-void splitter(T *input, size_t width, size_t height, int channels, size_t crop_width, size_t crop_height, vector<crop_info_t> crop_info, vector<T*> &output)
+template <typename pixelT>
+void splitter(pixelT *input, size_t width, size_t height, int channels, size_t crop_width, size_t crop_height, vector<crop_info_t> crop_info, vector<pixelT*> &output)
 {
 #pragma pack(push, 1)
 
 #define MULTI_PIXEL_NUM 4
 typedef struct {
-    T pixel[MULTI_PIXEL_NUM];
+    pixelT pixel[MULTI_PIXEL_NUM];
 } multi_pixel_t;
 
 #pragma pack(pop)
@@ -65,7 +65,7 @@ typedef struct {
     queue q(sel, dpc_common::exception_handler, prop_list);
     event e;
 
-    int input_size = width * height * sizeof(T);
+    int input_size = width * height * sizeof(pixelT);
     multi_pixel_t* kernel_input = malloc_host<multi_pixel_t>(input_size/sizeof(multi_pixel_t), q);
     memcpy(kernel_input, input, input_size);
 
@@ -74,7 +74,7 @@ typedef struct {
     memcpy(kernel_crop_info, crop_info.data(), num_crop * sizeof(crop_info_t));
 
     for(int i = 0; i < num_crop; i++)
-        output.push_back(malloc_shared<T>(crop_width * crop_height, q));
+        output.push_back(malloc_shared<pixelT>(crop_width * crop_height, q));
 
     cout << "Size of multi_pixel: " << sizeof(multi_pixel_t) << "\n";
 

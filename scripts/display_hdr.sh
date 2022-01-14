@@ -13,7 +13,7 @@ do
         ((crop_y=300*$j))
         ((x=$crop_x/4 + 100))
         ((y=$crop_y/4 + 100))
-        display -resize 75x75 -geometry +$x+$y seymour_park_crop${crop_x}x${crop_y}.hdr &
+        display -resize 75x75 -geometry +$x+$y seymour_park-x${crop_x}y${crop_y}.hdr &
         sleep 1
     done
 done
