@@ -8,14 +8,24 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/splitter_test",
-            "args": [],
+            "program": "/home/cyew3/ledsw/FFmpeg/ffmpeg_g",
+            // "args": ["-i", "/home/cyew3/ledsw/colordots/scripts/../../applications.media.gui.mips/content/Classroom_1080_30fps_3000_frames.h264",
+            //     "-c:v", "avc_qsv", "-vcodec", "rawvideo", "-video_size", "1920x1080", "-loglevel", "debug", "-pixel_format", "rgb24", "-sdp_file", "rawvid.sdp", "-f", "rawvideo", "mtl://127.0.0.1:10003"],
+            "args": ["-i", "/home/cyew3/ledsw/colordots/scripts/../../applications.media.gui.mips/content/Classroom_1080_30fps_3000_frames.h264",
+                "-c:v", "avc_qsv", "-vcodec", "rawvideo", "-video_size", "1920x1080", "-pixel_format", "rgb24", "-f", "rawvideo", "udp://127.0.0.1:10003"],
             "stopAtEntry": true,
-            "cwd": "${workspaceFolder}/build",
-            "environment": [],
-            "envFile": "${workspaceFolder}/scripts/splitter_env.sh"
+            "cwd": "/home/cyew3/ledsw/FFmpeg/",
+            "environment": [
+                {
+                    "name": "LD_LIBRARY_PATH",
+                    "value": "/home/cyew3/ledsw/FFmpeg/libavfilter:/home/cyew3/ledsw/FFmpeg/libavswresample:/home/cyew3/ledsw/FFmpeg/libavutil:/home/cyew3/ledsw/FFmpeg/libavdevice:/home/cyew3/ledsw/FFmpeg/libswscale:/home/cyew3/ledsw/FFmpeg/libavcodec:/home/cyew3/ledsw/FFmpeg/libavformat"
+                }
+            ],
             "externalConsole": false,
             "MIMode": "gdb",
+            "logging": {
+                "engineLogging": true
+            },
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -23,6 +33,7 @@
                     "ignoreFailures": true
                 }
             ]
+
         }
     ]
 }

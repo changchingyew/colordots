@@ -8,6 +8,9 @@ DEBUG="-loglevel verbose"
 
 set -x
 #OUTPUT="-c:v hevc_qsv -vcodec rawvideo -video_size 1920x1080 -pixel_format rgb24 -y output.yuv"
-OUTPUT="-c:v hevc_qsv -vcodec rawvideo -video_size 1920x1080 -loglevel debug -pixel_format rgb24 -sdp_file rawvid.sdp -f rtp rtp://127.0.0.1:10003"
+# OUTPUT="-c:v hevc_qsv -vcodec rawvideo -video_size 1920x1080 -loglevel debug -pixel_format rgb24 -sdp_file rawvid.sdp -f rtp rtp://127.0.0.1:10003"
+OUTPUT="-c:v avc_qsv -vcodec rawvideo -video_size 1920x1080 -pixel_format rgb24 -f rawvideo udp://127.0.0.1:10003"
+# OUTPUT="-c:v avc_qsv -vcodec rawvideo -video_size 1920x1080 -loglevel debug -pixel_format rgb24 -sdp_file rawvid.sdp -f rawvideo mtl://127.0.0.1:10003"
 
 ${FFMPEG_PATH}/ffmpeg_g  ${DEBUG} ${INPUT} -i ${MEDIA} ${OUTPUT}
+# ${FFMPEG_PATH}/ffmpeg  ${DEBUG} ${INPUT} -i ${MEDIA} ${OUTPUT}
